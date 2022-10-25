@@ -11,7 +11,7 @@ footertext = 'Data from inhouses conducted in the SMITE Discord'
 guilds = [discord.Object(id = 975643195016892416), discord.Object(id = 692741393424318554)]
 
 class getMatch(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot): 
         self.bot = bot
 
     @app_commands.command(name = "getmatch", description = "Searches for a match based on match ID")

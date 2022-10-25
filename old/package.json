@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "discord.js": "^14.6.0"
+  },
+  "type": "module",
+  "name": "a-bot-erasu",
+  "version": "1.0.0",
+  "main": "Aboterasu.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jdaniel6/A-bot-erasu.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jdaniel6/A-bot-erasu/issues"
+  },
+  "homepage": "https://github.com/jdaniel6/A-bot-erasu#readme",
+  "description": ""
+}

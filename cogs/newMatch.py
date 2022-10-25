@@ -1,4 +1,3 @@
-from subprocess import DETACHED_PROCESS
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -51,11 +50,12 @@ class newMatch(commands.Cog):
                 msg = await self.bot.wait_for('message', check = check, timeout = 120)
                 details2 = msg.content.split('\n')
                 details3 = []
-                print(s9s)
+                #print(s9s)
                 for player in details2:
                     print(player)
                     tempdict = {}
                     templist = player.split(',')
+                    print(templist)
                     tempdict['IGN'] = templist[0]
                     tempdict['GodPlayed'] = templist[1]
                     tempdict['Kills'] = templist[2]
@@ -63,6 +63,8 @@ class newMatch(commands.Cog):
                     tempdict['Assists'] = templist[4]
                     tempdict['Won'] = 'Lost'
                     details3.append(tempdict)                
+                print(details)
+                print(details3)
                 addWinnerDetails(details)
                 addLoserDetails(details3)
                 details.extend(details3)
@@ -94,12 +96,13 @@ def addWinnerDetails(d):
     igns = [i['IGN'] for i in s9s]
     for player in d:
         if(player['IGN'] in igns):
+            print('Reached here')
             index = igns.index(player['IGN'])
             s9s[index]['Played'] = str(int(s9s[index]['Played']) + 1)
-            s9s[index]['Won']+=1
-            s9s[index]['Kills']+=player['Kills']
-            s9s[index]['Deaths']+=player['Deaths']
-            s9s[index]['Assists']+=player['Assists']
+            s9s[index]['Won'] = str(int(s9s['Won']) + 1)
+            s9s[index]['Kills'] = str(int(s9s[index]['Kills']) + int(player['Kills']))
+            s9s[index]['Deaths'] = str(int(s9s[index]['Deaths']) + int(player['Deaths']))
+            s9s[index]['Assists'] = str(int(s9s[index]['Assists']) + int(player['Assists']))
         else:
             s9s.append({'IGN' : player['IGN'], 'Rank' : 'Unknown', 'PrimaryRole' : 'Unknown', 'SecondaryRole' : 'Unknown', 'Region' : 'Unknown' , 'Played' : '1' , 'Won' : '1', 'Kills' : player['Kills'], 'Deaths' : player['Deaths'], 'Assists' : player['Assists']})
 
@@ -113,7 +116,7 @@ def addLoserDetails(d):
             s9s[index]['Deaths']+=player['Deaths']
             s9s[index]['Assists']+=player['Assists']
         else:
-            s9s.append({'IGN' : player['IGN'], 'Rank' : 'Unknown', 'PrimaryRole' : 'Unknown', 'SecondaryRole' : 'Unknown', 'Region' : 'Unknown' , 'Played' : 1 , 'Won' : 0, 'Kills' : player['Kills'], 'Deaths' : player['Deaths'], 'Assists' : player['Assists']})
+            s9s.append({'IGN' : player['IGN'], 'Rank' : 'Unknown', 'PrimaryRole' : 'Unknown', 'SecondaryRole' : 'Unknown', 'Region' : 'Unknown' , 'Played' : 1 , 'Won' : '0', 'Kills' : player['Kills'], 'Deaths' : player['Deaths'], 'Assists' : player['Assists']})
 
 async def setup(bot):
     await bot.add_cog(newMatch(bot), guilds = guilds)
