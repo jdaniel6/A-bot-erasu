@@ -1,4 +1,5 @@
-/countries.csv
-/DISCORD_TOKEN
-/tests.py
+DISCORD_TOKEN
+tests.py
 old/AUTH
+old/countries.csv
+__pycache__
