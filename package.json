@@ -1,0 +1,17 @@
+{
+  "name": "a-bot-erasu",
+  "version": "1.0.0",
+  "description": "fun smite bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "ping"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.40.0"
+  }
+}
