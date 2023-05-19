@@ -1,10 +1,10 @@
+/* eslint-disable no-inline-comments, no-var */
 const { devID, authKey } = require('./config.json');
 const md5 = require('blueimp-md5');
-// eslint-disable-next-line no-inline-comments, no-var
 var resp; // couldn't get around using this for whatever reason (Promises annoyed me to the point where this was my fix)
 
 function currentDate() {
-    const timestamp = (new Date()).toISOString().replace(/[^0-9]/g, '').slice(0, -3);
+    const timestamp = (new Date()).toISOString().replace(/[^0-9]/g, '').slice(0, -3); // stolen from Disco who got it from StackOverflow (i tried implementing my own but it got too OOP and I gave up)
     return (timestamp);
 }
 
