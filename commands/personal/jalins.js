@@ -1,30 +1,10 @@
 const { SlashCommandBuilder } = require('discord.js');
-
+const possibleMalds = ['kms', 'Pls be woman', 'WHY DID YOU WALK AWAY WITH 20% HP INSTEAD OF RUNNING AT THE FED HUNTER WITH TRANS SHOGUNS', 'you might have more braincells than me but they\'re tier 1 braincells', 'my one braincell works harder than yours', 'you are severely lacking in braincells', 'i\'m done', 'do not talk to me', 'do not speak. DO NOT SPEAK.', 'where is gf', 'we can go colonize the fuckers now', 'https://media.discordapp.net/attachments/1001337915391082509/1051569422688587798/image0.jpg', 'https://media.discordapp.net/attachments/1001337915391082509/1065427665001123901/Image_6.png', 'hey uh I don’t think I want you to ram it up my ass', 'https://media.discordapp.net/attachments/1001337915391082509/1069716553261645956/Imputtingmyselfouttheremorefigureishouldat_7b868a2a80c15ea080043c0f8eb94bd1.jpg', 'The chase for mmr is a dark road', 'https://media.discordapp.net/attachments/1001337915391082509/1070417804739752136/image.png', 'Jizzed all over the field', 'I want to be held and told I’m good enough In ranked', 'WHITE COCK LOST TO BLACK COCK', 'https://media.discordapp.net/attachments/1001337915391082509/1079793496560500787/IMG_3919.png', 'Hey babe wanna have sex? No my mmr is low', 'All women do is cause heartbreak and boners', 'askldalsjlksdjflsjkdflks', 'Inting tilting malding losing', 'https://media.discordapp.net/attachments/708345952959987765/936287245072216064/meat3am.gif', 'If you or someone you know is in crisis, please call 911, go to the nearest emergency room, call 1-800-273-TALK (8255) to reach a 24-hour crisis center, or text MHA to 741741 at the Crisis Text Line. You can also call 1-800-985-5990 or text “TalkWithUs” to 66746 at the SAMHSA Disaster Distress Helpline.', 'https://media.discordapp.net/attachments/975643195016892419/997965644542783528/unknown.png?width=1012&height=671', 'https://docs.google.com/forms/d/1JtWaYsxSg7H5zeVDxGzgmWqPcEbcAOxvYkirO9-VwKU/viewform?edit_requested=true#responses', '<:Fish:1106754204233646110> <:Fish:1106754204233646110> <:Fish:1106754204233646110> <:Fish:1106754204233646110> <:Fish:1106754204233646110> <:Fish:1106754204233646110>', 'whores', 'WHORES', 'SALOPES AND WHOREGES', '<:Madge:1091021816971133018> <:Madge:1091021816971133018> <:Madge:1091021816971133018> <:Madge:1091021816971133018> <:Madge:1091021816971133018>', 'https://tenor.com/view/very-sus-fish-sus-fish-gif-25478870', 'fucking whores man', '<@459999054517108738> WHORE', 'euiaosjdolasdfkjhsdlkasnckmnsndcknal;;askdhjakjshd', 'ajlksdbhhjsvdiooijoiuiascjlknlndjasld', 'whores and shitters', '<:Madge:1091021816971133018> <:Madge:1091021816971133018> <:Madge:1091021816971133018> <:Fish:1106754204233646110>'];
 module.exports = {
     data : new SlashCommandBuilder()
         .setName('jalins')
         .setDescription('mald like Jalins'),
     async execute(interaction) {
-        interaction.reply('askldalsjlksdjflsjkdflks')
-            .then(() => {
-            // const collectorFilter = m => interaction.user.id === m.author.id;
-                interaction.channel.send('kms');
-                interaction.channel.send('<:Fish:1106754204233646110> <:Fish:1106754204233646110> <:Fish:1106754204233646110> <:Fish:1106754204233646110> <:Fish:1106754204233646110> <:Fish:1106754204233646110>');
-                interaction.channel.send('whores');
-                interaction.channel.send('WHORES');
-                interaction.channel.send('SALOPES AND WHOREGES');
-                interaction.channel.send('<:Madge:1091021816971133018> <:Madge:1091021816971133018> <:Madge:1091021816971133018> <:Madge:1091021816971133018> <:Madge:1091021816971133018>');
-                interaction.channel.send('https://tenor.com/view/very-sus-fish-sus-fish-gif-25478870');
-                interaction.channel.send('https://tenor.com/view/very-sus-fish-sus-fish-gif-25478870');
-                interaction.channel.send('https://tenor.com/view/very-sus-fish-sus-fish-gif-25478870');
-                interaction.channel.send('fucking whores man');
-                interaction.channel.send('<@459999054517108738> WHORE');
-                interaction.channel.send('euiaosjdolasdfkjhsdlkasnckmnsndcknal;;askdhjakjshd');
-                interaction.channel.send('ajlksdbhhjsvdiooijoiuiascjlknlndjasld');
-                interaction.channel.send('whores and shitters');
-                interaction.channel.send('<:Madge:1091021816971133018> <:Madge:1091021816971133018> <:Madge:1091021816971133018> <:Fish:1106754204233646110>');
-            })
-            .catch(console.error);
-
+        await interaction.reply(possibleMalds[Math.floor(Math.random() * possibleMalds.length)]);
     },
 };
