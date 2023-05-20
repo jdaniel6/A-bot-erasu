@@ -1,1 +1,3 @@
-old/**/* linguist-vendored
+old/* linguist-vendored
+old/Python/* linguist-vendored
+old/Python/cogs* linguist-vendored
