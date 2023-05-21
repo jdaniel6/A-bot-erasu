@@ -20,7 +20,6 @@ module.exports = {
         let skinURL = godJSON.godSkin_URL;
         if (skinURL == '') {
             skinURL = godThumbnail.slice(0, -4).concat(`_standard-${godName}.jpg`).replace(' ', '-').replace('god-icons', 'god-skins').toLowerCase();
-            console.log(skinURL);
         }
         const embed = new EmbedBuilder()
             .setColor(0xFFFF00)
