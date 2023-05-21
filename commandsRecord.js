@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const commands = [];
+const personal_commands = [];
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
@@ -14,6 +15,10 @@ for (const folder of commandFolders) {
 		const filePath = path.join(commandsPath, file);
 		const command = require(filePath);
 		if ('data' in command && 'execute' in command) {
+			if (folder == 'personal') {
+				personal_commands.push(command.data.toJSON());
+				continue;
+			}
 			commands.push(command.data.toJSON());
 		}
         else {
@@ -34,7 +39,13 @@ const rest = new REST().setToken(token);
 			{ body: commands },
 		);
 
+		const personal_data = await rest.put(
+			Routes.applicationGuildCommands(clientID, '975643195016892416'),
+			{ body: personal_commands },
+		);
+
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+		console.log(`Added ${personal_data.length} application (/) commands.`);
 	}
     catch (error) {
 		console.error(error);

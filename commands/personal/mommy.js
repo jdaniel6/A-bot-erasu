@@ -17,7 +17,11 @@ module.exports = {
         const godThumbnail = godJSON.godIcon_URL;
         const skinObt = godJSON.obtainability;
         const skinName = godJSON.skin_name;
-        const skinURL = godJSON.godSkin_URL;
+        let skinURL = godJSON.godSkin_URL;
+        if (skinURL == '') {
+            skinURL = godThumbnail.slice(0, -4).concat(`_standard-${godName}.jpg`).replace(' ', '-').replace('god-icons', 'god-skins').toLowerCase();
+            console.log(skinURL);
+        }
         const embed = new EmbedBuilder()
             .setColor(0xFFFF00)
             .setTitle(`Mommy ${godName} in her ${skinName} skin:`)
