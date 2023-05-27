@@ -24,13 +24,16 @@ module.exports = {
             .setTimestamp()
             .setFooter({text: 'You get 3 guesses in 60 seconds!', iconURL: 'https://static.wikia.nocookie.net/smite_gamepedia/images/1/13/Icons_Amaterasu_A01.png/revision/latest?cb=20160107232023'});
         const collectorFilter = response => {
-            return (godName.toLowerCase() === response.content.toLowerCase());
+            // console.log(response.content.mentions.repliedUser);
+            const isAnswerCorrect = godName.toLowerCase() === response.content.toLowerCase();
+            const isMessageReplyToMe = response.mentions.users.size === 0 ? false : (response.mentions.users.has('906773394689761290') ? true : false);
+            return (isAnswerCorrect && isMessageReplyToMe);
         };
         await interaction.reply({embeds : [embed], fetchReply : true})
             .then(() => {
                 interaction.channel.awaitMessages({filter: collectorFilter, max: 1, time: 60000, errors: ['time']})
                     .then(collected => {
-                        console.log(collected);
+                        // console.log();
                         interaction.followUp(`${collected.first().author} got the correct answer, **${godName}**!`);
                         const replyEmbed = new EmbedBuilder()
                             .setColor(0xFFFF00)
