@@ -10,7 +10,7 @@ module.exports = {
         .setName('godabilitytrivia')
         .setDescription('Guess which god has an ability with the given name'),
     async execute(interaction) {
-        const skinJSON = path.join('assets/gods', (Math.floor(Math.random() * fs.readdirSync('assets/gods').length - 1)).toString() + '.json'); // -1 because of gitignore
+        const skinJSON = path.join('assets/gods', (Math.floor(Math.random() * (fs.readdirSync('assets/gods').length - 1))).toString() + '.json'); // -1 because of gitignore
         const JSONData = fs.readFileSync(skinJSON);
         const godJSON = JSON.parse(JSONData.toString());
         const godName = godJSON.Name;
@@ -27,14 +27,16 @@ module.exports = {
         const collectorFilter = response => {
             if (response.mentions.users.size > 0) {
                 if (response.mentions.users.has('906773394689761290')) { // message is a reply to the bot (takes care of discord intents: if message is not directed to bot, don't even read)
-                    if (RegExp(/\b\w+\s\d/g).test(response.content.toLowerCase()) || RegExp(/\b\w+\s[p]/g).test(response.content.toLowerCase())) {
-                        if (godName.toLowerCase().includes(response.content.toLowerCase().slice(0, -2))) {
-                            if ((response.content.slice(-1) === (abilityNumber + 1).toString()) || ((response.content.slice(-1) === 'p') && (abilityNumber == 4))) { return true; }
-                            else { response.channel.send('Almost, but not quite!'); return false; }
+                    const godNameProcessed = godName.replace(/ /g, '').replace(/'/g, '').replace(/’/g, '').trim().toLowerCase();
+                    const ansProcessed = response.content.replace(/ /g, '').replace(/'/g, '').replace(/’/g, '').trim().toLowerCase();
+                    if (RegExp(/\b\w+\s[\d|p]/gi).test(response.content)) {
+                        if (godNameProcessed.includes(ansProcessed.slice(0, -1)) || (godNameProcessed === 'ahmuzencab' && ansProcessed.slice(0, -1) === 'amc') || (godNameProcessed === 'morganlefay' && ansProcessed.slice(0, -1) === 'mlf')) {
+                            if ((ansProcessed.slice(-1) === (abilityNumber + 1).toString()) || ((ansProcessed.slice(-1) === 'p') && (abilityNumber == 4))) { return true; }
+                            else { response.reply('Almost, but not quite!'); return false; }
                         }
                         else { return false; }
                     }
-                    else { response.channel.send('Answer must be in the format of GodName AbilityNumber (example: gilga 1). Use \'p\' to indicate passive (gilga p)'); return false; }
+                    else { response.reply('Answer must be in the format of GodName AbilityNumber (example: gilga 1). Use \'p\' to indicate passive (gilga p)'); return false; }
                 }
                 else { return false; }
             } // message is not a reply
@@ -75,7 +77,7 @@ function getOrdinal(abilityNumber) {
         case 1: return '2nd';
         case 2: return '3rd';
         case 3: return '4th';
-        case 4: return 'passive';
+        case 4: return 'Passive';
         default: return 'invalid';
     }
 }
