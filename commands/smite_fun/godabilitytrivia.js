@@ -14,7 +14,8 @@ module.exports = {
         const JSONData = fs.readFileSync(skinJSON);
         const godJSON = JSON.parse(JSONData.toString());
         const godName = godJSON.Name;
-        const get_ability = abilities[Math.floor(Math.random() * abilities.length)];
+        const abilityNumber = Math.floor(Math.random() * abilities.length);
+        const get_ability = abilities[abilityNumber];
         const godAbility = godJSON[get_ability];
         console.log(`${godName}`);
         const embed = new EmbedBuilder()
@@ -22,33 +23,44 @@ module.exports = {
             .setTitle('Guess the god from the ability name!')
             .setDescription(`Ability name: **${godAbility}**`)
             .setTimestamp()
-            .setFooter({text: 'You get 3 guesses in 60 seconds!', iconURL: 'https://static.wikia.nocookie.net/smite_gamepedia/images/1/13/Icons_Amaterasu_A01.png/revision/latest?cb=20160107232023'});
+            .setFooter({text: 'You get 30 seconds to guess!', iconURL: 'https://static.wikia.nocookie.net/smite_gamepedia/images/1/13/Icons_Amaterasu_A01.png/revision/latest?cb=20160107232023'});
         const collectorFilter = response => {
-            // console.log(response.content.mentions.repliedUser);
-            const isAnswerCorrect = godName.toLowerCase() === response.content.toLowerCase();
-            const isMessageReplyToMe = response.mentions.users.size === 0 ? false : (response.mentions.users.has('906773394689761290') ? true : false);
-            return (isAnswerCorrect && isMessageReplyToMe);
+            if (response.mentions.users.size > 0) {
+                if (response.mentions.users.has('906773394689761290')) { // message is a reply to the bot (takes care of discord intents: if message is not directed to bot, don't even read)
+                    if (RegExp(/\b\w+\s\d/g).test(response.content.toLowerCase()) || RegExp(/\b\w+\s[p]/g).test(response.content.toLowerCase())) {
+                        if (godName.toLowerCase().includes(response.content.toLowerCase().slice(0, -2))) {
+                            if ((response.content.slice(-1) === (abilityNumber + 1).toString()) || ((response.content.slice(-1) === 'p') && (abilityNumber == 4))) { return true; }
+                            else { response.channel.send('Almost, but not quite!'); return false; }
+                        }
+                        else { return false; }
+                    }
+                    else { response.channel.send('Answer must be in the format of GodName AbilityNumber (example: gilga 1). Use \'p\' to indicate passive (gilga p)'); return false; }
+                }
+                else { return false; }
+            } // message is not a reply
+            else { return false; }
         };
         await interaction.reply({embeds : [embed], fetchReply : true})
             .then(() => {
-                interaction.channel.awaitMessages({filter: collectorFilter, max: 1, time: 60000, errors: ['time']})
+                interaction.channel.awaitMessages({filter: collectorFilter, max: 1, time: 30000, errors: ['time']})
                     .then(collected => {
                         // console.log();
-                        interaction.followUp(`${collected.first().author} got the correct answer, **${godName}**!`);
+                        interaction.followUp(`${collected.first().author} got the correct answer, **${godName}**'s **${getOrdinal(abilityNumber)}** ability!`);
+                        const abNum = getOrdinal(abilityNumber);
                         const replyEmbed = new EmbedBuilder()
                             .setColor(0xFFFF00)
                             .setTitle(`${collected.first().author.username} got the answer!`)
-                            .setDescription(`**${godAbility}** is an ability on **${godName}**!`)
+                            .setDescription(`**${godAbility}** is **${godName}**'s **${abNum}** ability!`)
                             .setTimestamp()
                             .setFooter({text: 'Nicely done!', iconURL: 'https://static.wikia.nocookie.net/smite_gamepedia/images/1/13/Icons_Amaterasu_A01.png/revision/latest?cb=20160107232023'});
                         interaction.editReply({embeds: [replyEmbed]});
                     })
                     .catch(collected => {
-                        console.log(collected);
+                        const abNum = getOrdinal(abilityNumber);
                         const replyEmbed = new EmbedBuilder()
                             .setColor(0xFFFF00)
-                            .setTitle('Looks like nobody got the answer!')
-                            .setDescription(`**${godAbility}** is an ability on **${godName}**!`)
+                            .setTitle('Looks like nobody got the answer in time!')
+                            .setDescription(`**${godAbility}** is **${godName}**'s **${abNum}** ability!`)
                             .setTimestamp()
                             .setFooter({text: 'Better luck next time!', iconURL: 'https://static.wikia.nocookie.net/smite_gamepedia/images/1/13/Icons_Amaterasu_A01.png/revision/latest?cb=20160107232023'});
                         interaction.editReply({embeds: [replyEmbed]});
@@ -56,3 +68,14 @@ module.exports = {
             });
     },
 };
+
+function getOrdinal(abilityNumber) {
+    switch (abilityNumber) {
+        case 0: return '1st';
+        case 1: return '2nd';
+        case 2: return '3rd';
+        case 3: return '4th';
+        case 4: return 'passive';
+        default: return 'invalid';
+    }
+}
