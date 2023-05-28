@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { clientID } = require('../../config.json');
 const fs = require('fs');
 const path = require('path');
 
@@ -26,7 +27,7 @@ module.exports = {
             .setFooter({text: 'You get 30 seconds to guess!', iconURL: 'https://static.wikia.nocookie.net/smite_gamepedia/images/1/13/Icons_Amaterasu_A01.png/revision/latest?cb=20160107232023'});
         const collectorFilter = response => {
             if (response.mentions.users.size > 0) {
-                if (response.mentions.users.has('906773394689761290')) { // message is a reply to the bot (takes care of discord intents: if message is not directed to bot, don't even read)
+                if (response.mentions.users.has(clientID)) { // message is a reply to the bot (takes care of discord intents: if message is not directed to bot, don't even read)
                     const godNameProcessed = godName.replace(/ /g, '').replace(/'/g, '').replace(/’/g, '').trim().toLowerCase();
                     const ansProcessed = response.content.replace(/ /g, '').replace(/'/g, '').replace(/’/g, '').trim().toLowerCase();
                     if (RegExp(/\b\w+\s[\d|p]/gi).test(response.content)) {
