@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const possibleAles = ['||<:gottem:1112141905548026016>||', 'How the fffFUCK do you go\nfull 👏 fucking 👏 damage\nand get zeeero 👌 fuckinnng 👌 killlls'];
+const possibleAles = ['||<:gottem:1112141905548026016>||', 'Shut the hell your mouth', 'You fucking fuck', 'How the fffFUCK do you go\nfull 👏 fucking 👏 damage\nand get zeeero 👌 fuckinnng 👌 killlls'];
 module.exports = {
     data : new SlashCommandBuilder()
         .setName('ale')

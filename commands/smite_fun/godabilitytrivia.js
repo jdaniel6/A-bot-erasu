@@ -30,14 +30,14 @@ module.exports = {
                 if (response.mentions.users.has(clientID)) { // message is a reply to the bot (takes care of discord intents: if message is not directed to bot, don't even read)
                     const godNameProcessed = godName.replace(/ /g, '').replace(/'/g, '').replace(/’/g, '').trim().toLowerCase();
                     const ansProcessed = response.content.replace(/ /g, '').replace(/'/g, '').replace(/’/g, '').trim().toLowerCase();
-                    if (RegExp(/\b\w+\s[\d|p]/gi).test(response.content)) {
+                    if (((godNameProcessed === 'ra') && (ansProcessed.length == 3)) || (RegExp(/\b\w{3,}[\d|p]/gi).test(ansProcessed) && (ansProcessed.slice(0, 1) === godNameProcessed.slice(0, 1)))) {
                         if (godNameProcessed.includes(ansProcessed.slice(0, -1)) || (godNameProcessed === 'ahmuzencab' && ansProcessed.slice(0, -1) === 'amc') || (godNameProcessed === 'morganlefay' && ansProcessed.slice(0, -1) === 'mlf')) {
                             if ((ansProcessed.slice(-1) === (abilityNumber + 1).toString()) || ((ansProcessed.slice(-1) === 'p') && (abilityNumber == 4))) { return true; }
                             else { response.reply('Almost, but not quite!'); return false; }
                         }
                         else { return false; }
                     }
-                    else { response.reply('Answer must be in the format of GodName AbilityNumber (example: gilga 1). Use \'p\' to indicate passive (gilga p)'); return false; }
+                    else { response.reply('Answer must be at least first 3 letters of the god, in the format of GodName AbilityNumber (example: gilga 1). Use \'p\' to indicate passive (gilga p)'); return false; }
                 }
                 else { return false; }
             } // message is not a reply
