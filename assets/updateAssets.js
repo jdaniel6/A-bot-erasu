@@ -47,7 +47,7 @@ async function updateGodAssets() {
     try {
         const JSONresponse = await fetchResponse.json();
         for (const godJSON in JSONresponse) {
-            fs.writeFileSync (`commands/smite_technical/assets/gods/${godJSON}.json`, JSON.stringify (JSONresponse[godJSON], null, 4), 'utf8');
+            fs.writeFileSync (`assets/gods/${godJSON}.json`, JSON.stringify (JSONresponse[godJSON], null, 4), 'utf8');
         }
     }
     catch (error) {
@@ -85,10 +85,87 @@ async function updateGodSkins() {
     }
 }
 
+async function updateItemAssets() {
+    const fetchResponse = await fetch(await generateHiRezAPIURL('getitems'));
+    try {
+        const JSONresponse = await fetchResponse.json();
+        for (const itemJSON in JSONresponse) {
+            fs.writeFileSync (`assets/items/${itemJSON}.json`, JSON.stringify (JSONresponse[itemJSON], null, 4), 'utf8');
+        }
+    }
+    catch (error) {
+        console.log('Error generating session ID', error);
+    }
+}
+var hunterItems = [];
+var mageItems = [];
+var guardianItems = [];
+var warriorItems = [];
+var assassinItems = [];
+
+module.exports.updateItemLists = function updateItemLists(classInput) {
+    const JSONS = fs.readdirSync(__dirname + '/items').filter(file => path.extname(file) === '.json');
+    JSONS.forEach (file => {
+        const JSONData = fs.readFileSync(path.join(__dirname + '/items', file));
+        const itemJSON = JSON.parse(JSONData.toString());
+        if ((itemJSON.ActiveFlag == 'y') && ((itemJSON.ItemTier > 2) || (itemJSON.StartingItem == true))) {
+            if (itemJSON.RestrictedRoles == 'no restrictions') {
+                const menuArray = itemJSON.ItemDescription.Menuitems;
+                for (const menuJSON of menuArray) {
+                    if (menuJSON.Description == 'Physical Power') { // need to check for rat and griff tree
+                        hunterItems.push(itemJSON);
+                        warriorItems.push(itemJSON);
+                        assassinItems.push(itemJSON);
+                        break;
+                    }
+                    else if (menuJSON.Description == 'Magical Power') {
+                            mageItems.push(itemJSON);
+                            guardianItems.push(itemJSON);
+                            break;
+                        }
+                        else {
+                            hunterItems.push(itemJSON);
+                            warriorItems.push(itemJSON);
+                            assassinItems.push(itemJSON);
+                            mageItems.push(itemJSON);
+                            guardianItems.push(itemJSON);
+                            break;
+                        }
+                }
+            }
+            else {
+                const restrictions = itemJSON.RestrictedRoles.split(',');
+                if (!(restrictions.includes('hunter'))) { hunterItems.push(itemJSON); }
+                if (!(restrictions.includes('mage'))) { mageItems.push(itemJSON); }
+                if (!(restrictions.includes('guardian'))) { guardianItems.push(itemJSON); }
+                if (!(restrictions.includes('warrior'))) { warriorItems.push(itemJSON); }
+                if (!(restrictions.includes('assassin'))) { assassinItems.push(itemJSON); }
+            }
+        }
+        // const godName = godJSON.Name;
+        // const godID = godJSON.id;
+        // godsList[`${godName}`] = godID;
+    });
+    // console.log(hunterItems);
+    // console.log(mageItems);
+    // console.log(guardianItems);
+    // console.log(warriorItems);
+    // console.log(assassinItems);
+    switch (classInput) {
+        case 'h' : return hunterItems;
+        case 'm' : return mageItems;
+        case 'g' : return guardianItems;
+        case 'w' : return warriorItems;
+        case 'a' : return assassinItems;
+        default: return Error('unexpected class input');
+    }
+};
+
 // function updateGodsLists
 // updateGodAssets();
 
-updateGodsList();
+// updateGodsList();
 // console.log(JSON.stringify(godsList, null, 4));
 
-updateGodSkins();
+// updateGodSkins();
+// updateItemLists();
