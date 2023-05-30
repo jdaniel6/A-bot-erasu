@@ -26,7 +26,7 @@ module.exports = {
             .setTimestamp()
             .setFooter({text: 'You get 30 seconds to guess!', iconURL: 'https://static.wikia.nocookie.net/smite_gamepedia/images/1/13/Icons_Amaterasu_A01.png/revision/latest?cb=20160107232023'});
         const collectorFilter = async response => {
-            if (!(response.author.bot) && (response.mentions.users.size > 0)) {
+            if ((!(response.author.bot)) && (response.mentions.users.size > 0)) {
                 const instMessage = await interaction.fetchReply();
                 const refMessage = await response.fetchReference();
                 if (response.mentions.users.has(clientID) && (refMessage.id == instMessage.id)) { // message is a reply to the bot (takes care of discord intents: if message is not directed to bot, don't even read)

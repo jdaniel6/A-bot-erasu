@@ -97,11 +97,13 @@ async function updateItemAssets() {
         console.log('Error generating session ID', error);
     }
 }
+
 var hunterItems = [];
 var mageItems = [];
 var guardianItems = [];
 var warriorItems = [];
 var assassinItems = [];
+var ratItems = [];
 
 module.exports.updateItemLists = function updateItemLists(classInput) {
     const JSONS = fs.readdirSync(__dirname + '/items').filter(file => path.extname(file) === '.json');
@@ -109,37 +111,34 @@ module.exports.updateItemLists = function updateItemLists(classInput) {
         const JSONData = fs.readFileSync(path.join(__dirname + '/items', file));
         const itemJSON = JSON.parse(JSONData.toString());
         if ((itemJSON.ActiveFlag == 'y') && ((itemJSON.ItemTier > 2) || (itemJSON.StartingItem == true))) {
-            if (itemJSON.RestrictedRoles == 'no restrictions') {
-                const menuArray = itemJSON.ItemDescription.Menuitems;
-                for (const menuJSON of menuArray) {
-                    if (menuJSON.Description == 'Physical Power') { // need to check for rat and griff tree
+            const restrictions = itemJSON.RestrictedRoles.split(',');
+            const menuArray = itemJSON.ItemDescription.Menuitems;
+            for (const menuJSON of menuArray) {
+                if (menuJSON.Description.toLowerCase() == 'physical power') { // need to check for rat and griff tree
+                    if (itemJSON.DeviceName.toLowerCase().split(' ').includes('acorn')) {
+                        ratItems.push(itemJSON); break;
+                    }
+                    if (!(restrictions.includes('hunter'))) hunterItems.push(itemJSON);
+                    if (!(restrictions.includes('warrior'))) warriorItems.push(itemJSON);
+                    if (!(restrictions.includes('assassin'))) {
+                        assassinItems.push(itemJSON);
+                        ratItems.push(itemJSON);
+                    }
+                    break;
+                }
+                else if (menuJSON.Description.toLowerCase() == 'magical power') {
+                    if (!(restrictions.includes('mage'))) mageItems.push(itemJSON);
+                    if (!(restrictions.includes('guardian'))) guardianItems.push(itemJSON);
+                        break;
+                    }
+                    else {
                         hunterItems.push(itemJSON);
                         warriorItems.push(itemJSON);
                         assassinItems.push(itemJSON);
+                        mageItems.push(itemJSON);
+                        guardianItems.push(itemJSON);
                         break;
                     }
-                    else if (menuJSON.Description == 'Magical Power') {
-                            mageItems.push(itemJSON);
-                            guardianItems.push(itemJSON);
-                            break;
-                        }
-                        else {
-                            hunterItems.push(itemJSON);
-                            warriorItems.push(itemJSON);
-                            assassinItems.push(itemJSON);
-                            mageItems.push(itemJSON);
-                            guardianItems.push(itemJSON);
-                            break;
-                        }
-                }
-            }
-            else {
-                const restrictions = itemJSON.RestrictedRoles.split(',');
-                if (!(restrictions.includes('hunter'))) { hunterItems.push(itemJSON); }
-                if (!(restrictions.includes('mage'))) { mageItems.push(itemJSON); }
-                if (!(restrictions.includes('guardian'))) { guardianItems.push(itemJSON); }
-                if (!(restrictions.includes('warrior'))) { warriorItems.push(itemJSON); }
-                if (!(restrictions.includes('assassin'))) { assassinItems.push(itemJSON); }
             }
         }
         // const godName = godJSON.Name;
@@ -157,10 +156,28 @@ module.exports.updateItemLists = function updateItemLists(classInput) {
         case 'g' : return guardianItems;
         case 'w' : return warriorItems;
         case 'a' : return assassinItems;
+        case 'r' : return ratItems;
         default: return Error('unexpected class input');
     }
 };
 
+async function updatesplmatches() {
+    var adjustedURL = await generateHiRezAPIURL('getesportsproleaguedetails');
+    adjustedURL = adjustedURL.slice(0, -2);
+    const fetchResponse = await fetch(adjustedURL);
+    try {
+        const JSONresponse = await fetchResponse.json();
+        for (const match in JSONresponse) {
+            const filePath = 'assets/spl/matches';
+            fs.writeFileSync (filePath + `/${match}.json`, JSON.stringify (JSONresponse[match], null, 4), 'utf8');
+        }
+    }
+    catch (error) {
+        console.log('Error generating session ID', error);
+    }
+}
+
+// updatesplmatches();
 // function updateGodsLists
 // updateGodAssets();
 
