@@ -12,8 +12,7 @@ module.exports = {
             .setLabel('Invite SmiteWikiBot')
             .setStyle(ButtonStyle.Link);
         const amaBotButton = new ButtonBuilder()
-            .setURL('https://www.google.com')
-            .setDisabled()
+            .setURL('https://discord.com/api/oauth2/authorize?client_id=906773394689761290&permissions=27362498964577&scope=bot')
             .setLabel('Invite A-bot-erasu')
             .setStyle(ButtonStyle.Link);
         const discordServerButton = new ButtonBuilder()
