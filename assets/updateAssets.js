@@ -177,7 +177,7 @@ async function updatesplmatches() {
     }
 }
 
-// updatesplmatches();
+updatesplmatches();
 // function updateGodsLists
 // updateGodAssets();
 

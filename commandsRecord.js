@@ -1,5 +1,5 @@
 const { REST, Routes } = require('discord.js');
-const { clientID, token } = require('./config.json');
+const { clientID, token, camelotGuildID, rbbGuildID } = require('./config.json');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -40,12 +40,17 @@ const rest = new REST().setToken(token);
 		);
 
 		const personal_data = await rest.put(
-			Routes.applicationGuildCommands(clientID, '975643195016892416'),
+			Routes.applicationGuildCommands(clientID, camelotGuildID),
+			{ body: personal_commands },
+		);
+		const personal_data2 = await rest.put(
+			Routes.applicationGuildCommands(clientID, rbbGuildID),
 			{ body: personal_commands },
 		);
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
-		console.log(`Added ${personal_data.length} application (/) commands.`);
+		console.log(`Added ${personal_data.length} application (/) commands in Camelot.`);
+		console.log(`Added ${personal_data2.length} application (/) commands in RBB.`);
 	}
     catch (error) {
 		console.error(error);
