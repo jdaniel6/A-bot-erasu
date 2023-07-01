@@ -1,0 +1,29 @@
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
+let godsList = {};// in future use the gods variable from the updateAssets.js
+
+const JSONS = fs.readdirSync(__dirname + '/gods').filter(file => path.extname(file) === '.json');
+JSONS.forEach (file => {
+    const JSONData = fs.readFileSync(path.join(__dirname + '/gods', file));
+    const godJSON = JSON.parse(JSONData.toString());
+    const godName = godJSON.Name;
+    const godID = godJSON.id;
+    godsList[`${godName}`] = godID;
+});
+
+module.exports = {
+    data : new SlashCommandBuilder()
+        .setName('godabilitytrivia')
+        .setDescription('Guess which god has an ability with the given name')
+        .addStringOption(option =>
+            option.setName('god')
+                .setDescription('Name of the god to search for')
+                .setRequired(true)
+                .addChoices(
+                    {name: 'Ares', value: 'ares' },
+                ),
+                ),
+    async execute(interaction) {
+    },
+};

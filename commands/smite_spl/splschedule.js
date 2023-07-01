@@ -47,7 +47,7 @@ module.exports = {
             const matchJSON = path.join('assets/spl/matches', (upcomingMatches[upcomingMatches.length - 1]) + '.json'); // -1 because of gitignore
             const JSONData = fs.readFileSync(matchJSON);
             const parsedJSON = JSON.parse(JSONData.toString());
-            const rawMatchDate = (new Date(parsedJSON.match_date).getTime() / 1000).toFixed(0);
+            const rawMatchDate = (new Date(parsedJSON.match_date + ' UTC').getTime() / 1000).toFixed(0);
             const replyEmbed = new EmbedBuilder()
                 .setColor(0xFFFF00)
                 .setTitle('Current SPL Schedule')

@@ -1,8 +1,21 @@
 /* eslint-disable no-inline-comments, no-var */
+const { match } = require('assert');
 const { devID, authKey } = require('../config.json');
 const md5 = require('blueimp-md5');
 const fs = require('fs');
 const path = require('path');
+const { start } = require('repl');
+/**
+426 Casual Conq
+435 Arena
+440 Ranked Duel
+445 Assault
+448 Casual Joust
+450 Ranked Joust
+451 Ranked Conquest
+10189 Slash
+*/
+
 
 var godsList = {};
 
@@ -38,7 +51,6 @@ async function generateHiRezAPIURL(methodHandle) {
     const timestamp = currentDate();
     const sessionID = await generateSessionID(timestamp);
     const url = `https://api.smitegame.com/smiteapi.svc/${methodHandle}json/${devID}/${generateSignature(methodHandle, timestamp)}/${sessionID}/${timestamp}/1`;
-    console.log(url);
     return (url);
 }
 
@@ -104,6 +116,62 @@ var guardianItems = [];
 var warriorItems = [];
 var assassinItems = [];
 var ratItems = [];
+
+let matches = [];
+
+// redo this in a future patch
+const patches = {
+    '10.6' : {
+        'patch' : '10.6',
+        'start' : '20230613',
+        'end' : '20230627', // 10,00
+    },
+    '10.6bb' : {
+        'patch' : '10.6bb',
+        'start' : '20230627',
+        'end' : '0',
+    },
+};
+
+async function updateStats() {
+    const apiURL = (await generateHiRezAPIURL('getmatchidsbyqueue')).slice(0, -1);
+    for (const patch in patches) {
+        const startDate = patches[patch]['start'];
+        const endDate = patches[patch]['end'];
+        console.log(startDate.substr(0, 4));
+        console.log(startDate.substr(4, 2));
+        console.log(startDate.substr(6));
+        matches = [];
+        let counter = 0;
+        for (let loopDate = new Date(parseInt(startDate.substr(0, 4)), parseInt(startDate.substr(4, 2)) - 1, parseInt(startDate.substr(6))); loopDate <= (endDate === '0' ? new Date() : new Date(parseInt(endDate.substr(0, 4)), parseInt(endDate.substr(4, 2)) - 1, parseInt(endDate.substr(6)))); loopDate.setDate(loopDate.getDate() + 1)) {
+            // console.log(loopDate.toISOString());
+            const dateString = loopDate.toISOString();
+            const dateParameter = dateString.substr(0, 4) + dateString.substr(5, 2) + dateString.substr(8, 2);
+            console.log(`Retrieving details for matches on ${dateParameter}...`);
+            for (let hourParameter = 0; hourParameter < 24; hourParameter++) {
+                for (let minuteParameter = 0; minuteParameter < 60; minuteParameter += 10) {
+                    // Ranked Conquest
+                    const fetchResponse = await fetch(`${apiURL}451/${dateParameter}/${String(hourParameter).padStart(2, '0')},${String(minuteParameter).padStart(2, '0')}`);
+                    try {
+                        const JSONresponse = await fetchResponse.json();
+                        for (const itemJSON in JSONresponse) {
+                            const matchID = (JSONresponse[itemJSON])['Match'];
+                            matches.push(matchID);
+                            counter++;
+                        }
+                    }
+                    catch (error) {
+                        console.log('Error in getting matchIDs', error);
+                    }
+
+                }
+            }
+        }
+        fs.writeFileSync(`assets/matches/rankedConq/${patches[patch]['patch']}.json`, JSON.stringify({'matchIDs' : `${matches}`}, null, 4), 'utf8');
+        console.log(`${counter} Ranked Conquest matches saved`);
+    }
+}
+
 
 module.exports.updateItemLists = function updateItemLists(classInput) {
     const JSONS = fs.readdirSync(__dirname + '/items').filter(file => path.extname(file) === '.json');
@@ -177,7 +245,7 @@ async function updatesplmatches() {
     }
 }
 
-updatesplmatches();
+// updatesplmatches();
 // function updateGodsLists
 // updateGodAssets();
 
@@ -186,3 +254,5 @@ updatesplmatches();
 
 // updateGodSkins();
 // updateItemLists();
+
+updateStats();
