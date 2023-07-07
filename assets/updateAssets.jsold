@@ -4,7 +4,6 @@ const { devID, authKey } = require('../config.json');
 const md5 = require('blueimp-md5');
 const fs = require('fs');
 const path = require('path');
-const { start } = require('repl');
 /**
 426 Casual Conq
 435 Arena
@@ -120,18 +119,7 @@ var ratItems = [];
 let matches = [];
 
 // redo this in a future patch
-const patches = {
-    '10.6' : {
-        'patch' : '10.6',
-        'start' : '20230613',
-        'end' : '20230627', // 10,00
-    },
-    '10.6bb' : {
-        'patch' : '10.6bb',
-        'start' : '20230627',
-        'end' : '0',
-    },
-};
+const patches = 
 
 async function updateStats() {
     const apiURL = (await generateHiRezAPIURL('getmatchidsbyqueue')).slice(0, -1);
