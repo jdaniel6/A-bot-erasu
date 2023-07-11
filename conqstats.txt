@@ -1,0 +1,29 @@
+conqstats
+	field for rank
+	field for patch
+	field to sort by 1) winrate 2) pickrate 3) banrate 4) pick+ban rate 5) kda 6) damage 7) mitigated 8) healing
+
+getgodstats
+	field for rank
+	field for patch
+	conq, joust, duel, assault, arena, slash wrs, prs, br, p+br, kda, damage, mitigated, healing
+	common items
+	comparison with previous patches
+
+
+each patch is a workbook
+workbook has sheets with individual ranks (and one total)
+god	winrate		pickrate(games played)	banrate		pick+banrate	kda	damage	miti	healing
+
+
+
+timeout after 300 seconds
+
+
+get matches
+if patch exists, go to workbook // else create workbook and go to workbook
+if sheet exists, go to sheet // else create sheet and go to sheet
+if god exists, go to god // else create god and go to god
+
+update stats in this sheet as WELL as total 
+
