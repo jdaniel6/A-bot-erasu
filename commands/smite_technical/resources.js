@@ -126,6 +126,8 @@ module.exports = {
             console.error(error);
             }
         });
-
+        collector.on('end', async () => {
+            await interaction.editReply({ embeds: [await embedMessage(_page)], components: []});
+        });
     },
 };
