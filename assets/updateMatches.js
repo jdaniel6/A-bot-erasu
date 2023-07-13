@@ -90,13 +90,6 @@ async function updateMatches() {
     const patchResponse = await fetch(patchURL);
     const patchJSON = await patchResponse.json();
     console.log(patchJSON['version_string']);
-    const db = new sqlite3.Database(path.join(__dirname, `matches/${patchJSON['version_string']}.db`), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
-        if (err) {
-            console.error(err.message);
-        }
-        console.log('Connected');
-    });
-    db.toString();
 
     const apiURL = `https://api.smitegame.com/smiteapi.svc/getmatchidsbyqueuejson/${devID}/${generateSignature('getmatchidsbyqueue', timestamp)}/${sessionID}/${timestamp}/`;
     const matchesURL = `https://api.smitegame.com/smiteapi.svc/getmatchdetailsbatchjson/${devID}/${generateSignature('getmatchdetailsbatch', timestamp)}/${sessionID}/${timestamp}/`;
@@ -104,6 +97,7 @@ async function updateMatches() {
     const lastDate = lastupdate['date'];
     let counter = 0;
     for (let loopDate = new Date(lastDate); loopDate <= new Date(); loopDate.setMinutes(loopDate.getMinutes() + 10)) {
+        let errors = 0;
         const dateString = loopDate.toISOString();
         console.log(dateString);
         const dateParameter = dateString.substr(0, 4) + dateString.substr(5, 2) + dateString.substr(8, 2);
@@ -124,6 +118,7 @@ async function updateMatches() {
             }
             catch (error) {
                 console.log('Error in getting matchIDs', error);
+                errors++;
             }
 
             try {
@@ -164,13 +159,23 @@ async function updateMatches() {
                         }
 
                         // push stuff into db here
+                        const db = new sqlite3.Database(path.join(__dirname, `stats/${mode}/${patchJSON['version_string']}.db`), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+                            if (err) {
+                                console.error(err.message);
+                            }
+                            console.log('Connected');
+                        });
                     }
                 }
             }
             catch (error) {
                 console.log('Error in getting batch match details', error);
+                errors++;
             }
             console.log(`${counter} ${mode} matches saved`);
+        }
+        if (!errors) {
+            assetData['lastupdate']['date'] = loopDate.toISOString();
         }
     }
 }
