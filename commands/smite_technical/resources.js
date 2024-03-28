@@ -66,7 +66,7 @@ module.exports = {
 
         const filter = i => (i.customId === 'forward' || i.customId === 'backwards' || i.customId === 'select') && i.user.id === interaction.user.id;
 
-        const collector = interaction.channel.createMessageComponentCollector({ filter, time: 30000 });
+        const collector = interaction.channel.createMessageComponentCollector({ filter, time: 120000 });
 
         collector.on('collect', async i => {
             try {

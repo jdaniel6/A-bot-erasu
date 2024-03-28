@@ -123,6 +123,7 @@ async function updateMatches() {
 
             try {
                 let adjustedMatchesURL = matchesURL;
+                const modeStats = {};
                 for (let i = 0; i < matches.length(); i += 10) {
                     for (let j = 0; j < 10; j++) {
                         if (i + j < matches.length()) {
@@ -159,14 +160,17 @@ async function updateMatches() {
                         }
 
                         // push stuff into db here
-                        const db = new sqlite3.Database(path.join(__dirname, `stats/${mode}/${patchJSON['version_string']}.db`), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
-                            if (err) {
-                                console.error(err.message);
-                            }
-                            console.log('Connected');
-                        });
+                        
+
                     }
+
                 }
+                const db = new sqlite3.Database(path.join(__dirname, `stats/${mode}/${patchJSON['version_string']}.db`), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+                    if (err) {
+                        console.error(err.message);
+                    }
+                    console.log('Connected');
+                });
             }
             catch (error) {
                 console.log('Error in getting batch match details', error);

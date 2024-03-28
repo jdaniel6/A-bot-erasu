@@ -6,12 +6,38 @@ const path = require('path');
 const abilities = ['Ability1', 'Ability2', 'Ability3', 'Ability4', 'Ability5' ];
 // "godAbility1_URL"
 
+function getRandomFile() {
+    const pathToDir = 'assets/gods';
+    let skinJSON;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+        skinJSON = fs.readdir(path.join(pathToDir), (files) => {
+            const max = files.length - 2;
+            const min = 0;
+            const index = Math.round(Math.random() * (max - min) + min - 1);
+            const file = files[index];
+            console.log(file);
+            return (file);
+        }); // -1 because of gitignore
+        try {
+            const JSONData = fs.readFileSync(skinJSON);
+            const godJSON = JSON.parse(JSONData.toString());
+            const godName = godJSON.Name;
+        }
+        catch (error) {
+            continue;
+        }
+        break;
+    }
+    return (skinJSON);
+}
+
 module.exports = {
     data : new SlashCommandBuilder()
         .setName('godabilitytrivia')
         .setDescription('Guess which god has an ability with the given name'),
     async execute(interaction) {
-        const skinJSON = path.join('assets/gods', (Math.floor(Math.random() * (fs.readdirSync('assets/gods').length - 1))).toString() + '.json'); // -1 because of gitignore
+        const skinJSON = getRandomFile();
         const JSONData = fs.readFileSync(skinJSON);
         const godJSON = JSON.parse(JSONData.toString());
         const godName = godJSON.Name;
@@ -28,20 +54,25 @@ module.exports = {
         const collectorFilter = async response => {
             if ((!(response.author.bot)) && (response.mentions.users.size > 0)) {
                 const instMessage = await interaction.fetchReply();
-                const refMessage = await response.fetchReference();
-                if (response.mentions.users.has(clientID) && (refMessage.id == instMessage.id)) { // message is a reply to the bot (takes care of discord intents: if message is not directed to bot, don't even read)
-                    const godNameProcessed = godName.replace(/ /g, '').replace(/'/g, '').replace(/’/g, '').trim().toLowerCase();
-                    const ansProcessed = response.content.replace(/ /g, '').replace(/'/g, '').replace(/’/g, '').trim().toLowerCase();
-                    if (((godNameProcessed === 'ra') && (ansProcessed.length == 3)) || (RegExp(/\b\w{3,}[\d|p]/gi).test(ansProcessed))) {
-                        if ((godNameProcessed.includes(ansProcessed.slice(0, -1)) || (godNameProcessed === 'ahmuzencab' && ansProcessed.slice(0, -1) === 'amc') || (godNameProcessed === 'morganlefay' && ansProcessed.slice(0, -1) === 'mlf')) && (ansProcessed.slice(0, 1) === godNameProcessed.slice(0, 1))) {
-                            if ((ansProcessed.slice(-1) === (abilityNumber + 1).toString()) || ((ansProcessed.slice(-1) === 'p') && (abilityNumber == 4))) { return true; }
-                            else { response.reply('Almost, but not quite!'); return false; }
+                try {
+                    const refMessage = await response.fetchReference();
+                    if (response.mentions.users.has(clientID) && (refMessage.id == instMessage.id)) { // message is a reply to the bot (takes care of discord intents: if message is not directed to bot, don't even read)
+                        const godNameProcessed = godName.replace(/ /g, '').replace(/'/g, '').replace(/’/g, '').trim().toLowerCase();
+                        const ansProcessed = response.content.replace(/ /g, '').replace(/'/g, '').replace(/’/g, '').trim().toLowerCase();
+                        if (((godNameProcessed === 'ra') && (ansProcessed.length == 3)) || (RegExp(/\b\w{3,}[\d|p]/gi).test(ansProcessed))) {
+                            if ((godNameProcessed.includes(ansProcessed.slice(0, -1)) || (godNameProcessed === 'ahmuzencab' && ansProcessed.slice(0, -1) === 'amc') || (godNameProcessed === 'morganlefay' && ansProcessed.slice(0, -1) === 'mlf')) && (ansProcessed.slice(0, 1) === godNameProcessed.slice(0, 1))) {
+                                if ((ansProcessed.slice(-1) === (abilityNumber + 1).toString()) || ((ansProcessed.slice(-1) === 'p') && (abilityNumber == 4))) { return true; }
+                                else { response.reply('Almost, but not quite!'); return false; }
+                            }
+                            else { return false; }
                         }
-                        else { return false; }
+                        else { response.reply('Answer must be at least first 3 letters of the god, in the format of GodName AbilityNumber (example: gilga 1). Use \'p\' to indicate passive (gilga p)'); return false; }
                     }
-                    else { response.reply('Answer must be at least first 3 letters of the god, in the format of GodName AbilityNumber (example: gilga 1). Use \'p\' to indicate passive (gilga p)'); return false; }
+                    else { return false; }
                 }
-                else { return false; }
+                catch (error) {
+                    console.error('Message without reference (why?) ' + error);
+                }
             } // message is not a human reply
             else { return false; }
         };
