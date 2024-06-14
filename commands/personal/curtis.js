@@ -4,13 +4,22 @@ module.exports = {
         .setName('curtis')
         .setDescription('i\'m really very busy'),
     async execute(interaction) {
-        const quote = await (await fetch('https://animechan.xyz/api/random')).json()
+        let quote = {};
+        try {
+            quote = await (await fetch('https://animechan.xyz/api/random')).json()
+        } catch {
+            quote = {
+                'character' : 'Error occurred',
+                'anime' : 'Anime API down/limit on requests expired',
+                'quote' : 'Why not play some ESO instead?'
+            }
+        }
         const embed = new EmbedBuilder()
             .setColor(0xFFFF00)
             .setTitle(`${quote['character']} - ${quote['anime']}`)
             .setDescription(`${quote['quote']}`)
             .setTimestamp()
-            .setFooter({text: 'Limited to 60 requests an hour, if the command fails that\'s why'})
+            .setFooter({text: 'Limited to 60 requests an hour'})
         await interaction.reply({embeds : [embed]});
     },
 };
