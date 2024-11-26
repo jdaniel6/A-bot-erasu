@@ -6,29 +6,45 @@ const path = require('path');
 const abilities = ['Ability1', 'Ability2', 'Ability3', 'Ability4', 'Ability5' ];
 // "godAbility1_URL"
 
-function getRandomFile() {
-    const pathToDir = 'assets/gods';
-    let skinJSON;
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-        skinJSON = fs.readdir(path.join(pathToDir), (files) => {
-            const max = files.length - 2;
-            const min = 0;
-            const index = Math.round(Math.random() * (max - min) + min - 1);
-            const file = files[index];
-            console.log(file);
-            return (file);
-        }); // -1 because of gitignore
-        try {
-            const JSONData = fs.readFileSync(skinJSON);
-            const godJSON = JSON.parse(JSONData.toString());
-            const godName = godJSON.Name;
-        }
-        catch (error) {
-            continue;
-        }
-        break;
+const scoresPath = path.join('assets', 'triviascores.json');
+let scores = new Map();
+try {
+    if (fs.existsSync(scoresPath)) {
+        const scoreData = JSON.parse(fs.readFileSync(scoresPath));
+        scores = new Map(Object.entries(scoreData));
     }
+} catch (error) {
+    console.error('Error loading scores:', error);
+}
+
+function saveScores() {
+    try {
+        const dir = path.dirname(scoresPath);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        const scoreData = Object.fromEntries(scores);
+        fs.writeFileSync(scoresPath, JSON.stringify(scoreData, null, 2));
+    } catch (error) {
+        console.error('Error saving scores:', error);
+    }
+}
+
+function getRandomFile() {
+    const pathToDir = 'assets/gods';  
+    let skinJSON = "";
+    // eslint-disable-next-line no-constant-condition
+    try {
+        const allFiles = fs.readdirSync(path.join(pathToDir));
+        const jsonFiles = allFiles.filter(file => file.endsWith('.json'));
+        const index = Math.floor(Math.random() * jsonFiles.length);
+        const fileName = jsonFiles[index];
+        skinJSON = path.join(pathToDir, fileName);
+    }
+    catch (error) {
+        console.error(error);
+    }
+    console.log(skinJSON);
     return (skinJSON);
 }
 
@@ -60,7 +76,7 @@ module.exports = {
                         const godNameProcessed = godName.replace(/ /g, '').replace(/'/g, '').replace(/’/g, '').trim().toLowerCase();
                         const ansProcessed = response.content.replace(/ /g, '').replace(/'/g, '').replace(/’/g, '').trim().toLowerCase();
                         if (((godNameProcessed === 'ra') && (ansProcessed.length == 3)) || (RegExp(/\b\w{3,}[\d|p]/gi).test(ansProcessed))) {
-                            if ((godNameProcessed.includes(ansProcessed.slice(0, -1)) || (godNameProcessed === 'ahmuzencab' && ansProcessed.slice(0, -1) === 'amc') || (godNameProcessed === 'morganlefay' && ansProcessed.slice(0, -1) === 'mlf')) && (ansProcessed.slice(0, 1) === godNameProcessed.slice(0, 1))) {
+                            if ((godNameProcessed.includes(ansProcessed.slice(0, -1)) || (godNameProcessed === 'ahmuzencab' && ansProcessed.slice(0, -1) === 'amc') || (godNameProcessed === 'morganlefay' && ansProcessed.slice(0, -1) === 'mlf') || (godNameProcessed === 'sunwukong' && ansProcessed.slice(0, -1) === 'swk')) && (ansProcessed.slice(0, 1) === godNameProcessed.slice(0, 1))) {
                                 if ((ansProcessed.slice(-1) === (abilityNumber + 1).toString()) || ((ansProcessed.slice(-1) === 'p') && (abilityNumber == 4))) { return true; }
                                 else { response.reply('Almost, but not quite!'); return false; }
                             }
@@ -81,6 +97,9 @@ module.exports = {
                 interaction.channel.awaitMessages({filter: collectorFilter, max: 1, time: 30000, errors: ['time']})
                     .then(collected => {
                         // console.log();
+                        const currentScore = scores.get(collected.first().author.id) || 0;
+                        scores.set(collected.first().author.id, currentScore + 1);
+                        saveScores();
                         interaction.followUp(`${collected.first().author} got the correct answer, **${godName}**'s **${getOrdinal(abilityNumber)}** ability!`);
                         const abNum = getOrdinal(abilityNumber);
                         const replyEmbed = new EmbedBuilder()
