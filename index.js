@@ -4,7 +4,7 @@ const { token } = require('./config.json');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const client = new Client({intents:[GatewayIntentBits.Guilds, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMembers]});
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMembers] });
 
 client.commands = new Collection();
 
@@ -35,7 +35,7 @@ client.once(Events.ClientReady, c => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
-    if (!interaction.isChatInputCommand()) return;
+    //if (!interaction.isChatInputCommand()) return;
 
     const command = interaction.client.commands.get(interaction.commandName);
 
@@ -43,22 +43,30 @@ client.on(Events.InteractionCreate, async interaction => {
         console.error(`${interaction.commandName} is not a valid command.`);
         return;
     }
-    try {
-        await command.execute(interaction);
-    }
-    catch (error) {
-        console.error(error);
-        if (interaction.replied || interaction.deferred) {
-            await interaction.followUp({
-                content: 'Error while attempting to execute this command...',
-                ephemeral: true
-            });
+    if (interaction.isAutocomplete()) {
+        try {
+            await command.autocomplete(interaction);
+        } catch (error) {
+            console.error(error);
         }
-        else {
-            await interaction.reply({
-                content: 'Error while executing this command...',
-                ephemeral: true
-            });
+    } else if (interaction.isChatInputCommand()) {
+        try {
+            await command.execute(interaction);
+        }
+        catch (error) {
+            console.error(error);
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({
+                    content: 'Error while attempting to execute this command...',
+                    ephemeral: true
+                });
+            }
+            else {
+                await interaction.reply({
+                    content: 'Error while executing this command...',
+                    ephemeral: true
+                });
+            }
         }
     }
 });
