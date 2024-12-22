@@ -2,7 +2,7 @@ const { EmbedBuilder, SlashCommandBuilder, ActivityType, ButtonBuilder, ButtonSt
 const godThumbnail = 'https://webcdn.hirezstudios.com/smite/god-skins/amaterasu_sunny-chibi.jpg';
 
 module.exports = {
-    data : new SlashCommandBuilder()
+    data: new SlashCommandBuilder()
         .setName('help')
         .setDescription('List supported commands and how to use them'),
     async execute(interaction) {
@@ -29,14 +29,14 @@ module.exports = {
             .addFields(
                 { name: 'Basic Commands', value: '**help** : List supported commands and how to use them \n**latency** : Gets the bot\'s latency \n**ping** : Ping the bot' },
                 { name: 'SMITE: Fun', value: '**godabilitytrivia** : Play SMITE Trivia!\n**leaderboard** : View the leaderboard for this server\n**sunshine** : Spread some sunlight onto chat!' },
-                { name: 'SMITE: SPL', value: 'Not yet supported\n Planned features: leaderboard, schedule, teams'},
-                { name: 'SMITE: Technical', value: '**resources** : View helpful resources for SMITE 1 and 2\nPlanned features: Damage calculator, customisable build generator, view latest patch information, track item and god changes'},
-                { name: 'Sister bot', value: 'Get the best builds for any god: use SmiteWikiBot by DiscoFerry#6038!'},
-                { name: 'Server count', value: `Currently serving ${interaction.client.guilds.cache.size} servers!`},
-                { name: 'Bot version: 0.8.1', value: `Data from the HiRez API, builds provided by SMITE mentors using SmiteWikiBot`},
+                { name: 'SMITE: SPL', value: 'Not yet supported\n Planned features: leaderboard, schedule, teams' },
+                { name: 'SMITE: Technical', value: '**resources** : View helpful resources for SMITE 1 and 2\n**s2item** : Get information about an item in SMITE 2 Alpha\n**s2god** : Get information about a god from SMITE 2 Alpha\nPlanned features: Damage calculator, customisable build generator, view latest patch information, track item and god changes' },
+                { name: 'Sister bot', value: 'Get the best builds for any god: use SmiteWikiBot by DiscoFerry#6038!' },
+                { name: 'Server count', value: `Currently serving ${interaction.client.guilds.cache.size} servers!` },
+                { name: 'Bot version: 0.8.2', value: `Data from the HiRez API, builds provided by SMITE mentors using SmiteWikiBot` },
             )
             .setTimestamp()
-            .setFooter({text: 'Developed by thekayaya (formerly Kayaya#3081), inspired and assisted by discoferry (formerly DiscoFerry#6038)', iconURL: 'https://static.wikia.nocookie.net/smite_gamepedia/images/1/13/Icons_Amaterasu_A01.png/revision/latest?cb=20160107232023'});
-        await interaction.reply({embeds : [embed], components: [buttons]});
+            .setFooter({ text: 'Developed by thekayaya (formerly Kayaya#3081), inspired and assisted by discoferry (formerly DiscoFerry#6038), with data for the SMITE 2 Alpha provided by mytharria', iconURL: 'https://static.wikia.nocookie.net/smite_gamepedia/images/1/13/Icons_Amaterasu_A01.png/revision/latest?cb=20160107232023' });
+        await interaction.reply({ embeds: [embed], components: [buttons] });
     },
 };
