@@ -29,7 +29,7 @@ module.exports = {
             .addFields(
                 { name: 'Basic Commands', value: '**help** : List supported commands and how to use them \n**latency** : Gets the bot\'s latency \n**ping** : Ping the bot' },
                 { name: 'SMITE: Fun', value: '**godabilitytrivia** : Play SMITE Trivia!\n**leaderboard** : View the leaderboard for this server\n**sunshine** : Spread some sunlight onto chat!' },
-                { name: 'SMITE: SPL', value: 'Not yet supported\n Planned features: leaderboard, schedule, teams' },
+                { name: 'SMITE: SPL', value: '**vegastourney** : Get information about the Vegas Tourney teams and standings\nPlanned features: leaderboard, schedule, teams' },
                 { name: 'SMITE: Technical', value: '**resources** : View helpful resources for SMITE 1 and 2\n**s2item** : Get information about an item in SMITE 2 Alpha\n**s2god** : Get information about a god from SMITE 2 Alpha\nPlanned features: Damage calculator, customisable build generator, view latest patch information, track item and god changes' },
                 { name: 'Sister bot', value: 'Get the best builds for any god: use SmiteWikiBot by DiscoFerry#6038!' },
                 { name: 'Server count', value: `Currently serving ${interaction.client.guilds.cache.size} servers!` },

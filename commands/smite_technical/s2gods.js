@@ -1,6 +1,7 @@
-const { MessageEmbed, MessageActionRow, MessageButton, SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder } = require('discord.js');
 const fs = require('fs').promises;
 const path = require('path');
+const { assetsAbsPath } = require('../../config.json');
 
 // ... existing code ...
 
@@ -41,8 +42,8 @@ function getDesc(godInfo, opt) {
     if (opt === 'ability3') return (`**${godInfo.abilities.A03.name}:**\n${godInfo.abilities.A03.shortDesc}`);
     if (opt === 'ability4') return (`**${godInfo.abilities.A04.name}:**\n${godInfo.abilities.A04.shortDesc}`);
     if (opt === 'basic') return (`**${godInfo.subText || 'Title unavailable from API'}:** ${godInfo.shortRole || 'Description unavailable from API'}`);
-    if (opt === 'build') return (`Builds provided by Mytharria using [Smite Calculator](https://www.smitecalculator.pro)`);
-    if (opt === 'lore') return (`**${godInfo.loreShort || 'Lore unavailable from API'}**\n${godInfo.loreLong || 'Lore unavailable from API'}`)
+    if (opt === 'build') return (`Builds provided by Mytharria using [Smite Calculator](https://www.smitecalculator.pro), with input from Skepso, Mendar and other mentors from the [SMITE Server](https://discord.gg/smitegame)`);
+    if (opt === 'lore') return (`**${godInfo.loreShort || 'Lore unavailable from API'}**\n\n${godInfo.loreLong || 'Lore unavailable from API'}`)
 }
 
 function getFields(godInfo, opt) {
@@ -53,7 +54,7 @@ function getFields(godInfo, opt) {
             for (const pass in Object.keys(godInfo)) {
                 if (pass.includes('passive')) {
                     if (godInfo[pass][valueKeys]) for (const vkey in godInfo[pass][valueKeys]) {
-                        const name = vkey.replace('Cheat', '').replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim().replace('Dur', 'Duration');
+                        const name = vkey.replace('INT', 'Intelligence ').replace('STR', 'Strength ').replace('Cheat', '').replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim().replace(/Dur\b/g, 'Duration');
                         if (!names.includes(name)) {
                             passes.push({
                                 name: name,
@@ -78,7 +79,7 @@ function getFields(godInfo, opt) {
             const names = [];
             const abNumber = `A0${opt.slice(-1)}`;
             if (godInfo['abilities'][abNumber]['valueKeys']) for (const vkey in godInfo['abilities'][abNumber]['valueKeys']) {
-                const name = vkey.replace('Cheat', '').replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim().replace('Dur', 'Duration');
+                const name = vkey.replace('INT', 'Intelligence ').replace('STR', 'Strength ').replace('Cheat', '').replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim().replace(/Dur\b/g, 'Duration');
                 if (!names.includes(name)) {
                     vals.push({
                         name: name,
@@ -102,7 +103,7 @@ function getFields(godInfo, opt) {
             const vals = [];
             const names = [];
             if (godInfo['baseStats']) for (const vkey in godInfo['baseStats']) {
-                const name = vkey.replace('Cheat', '').replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim().replace('Dur', 'Duration');
+                const name = vkey.replace('INT', 'Intelligence ').replace('STR', 'Strength ').replace('Cheat', '').replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim().replace(/Dur\b/g, 'Duration');
                 if (!names.includes(name)) {
                     vals.push({
                         name: name,
@@ -120,7 +121,20 @@ function getFields(godInfo, opt) {
             if (vals.length > 0) return vals;
             else return null;
         }
-        else return null;
+        else {
+            if (opt.includes('build') && godInfo.builds) {
+                const f = [];
+                for (const build of godInfo.builds) {
+                    f.push({
+                        name: `**Optimal build:** __${build.full_build.join(', ')}__`,
+                        value: `**Start with: **${build.starting.join(', ')}\n**Usage: **${build.notes}\nCreated by ${build.author} on ${build.last_edit} based on SMITE2 patch ${build.based_on_patch}`
+                    })
+                }
+                if (f.length > 0) return f;
+                else return null;
+            }
+            else return null;
+        }
     }
 
 }
@@ -131,27 +145,27 @@ function getThumb(godInfo, opt) {
     switch (opt) {
         case 'build': case 'lore': case 'basic':
             thumbName = `${godInfo.name.replace(' ', '')}.webp`;
-            thumb = new AttachmentBuilder(`D:\\Documents\\GitHub\\A-bot-erasu\\assets\\s2gods\\${godInfo.name.replace(' ', '')}.webp`)
+            thumb = new AttachmentBuilder(`${assetsAbsPath}s2gods\\${godInfo.name.replace(' ', '')}.webp`)
             break;
         case 'passive':
             thumbName = `${godInfo.name.replace(' ', '')}Passive.webp`;
-            thumb = new AttachmentBuilder(`D:\\Documents\\GitHub\\A-bot-erasu\\assets\\s2gods\\${godInfo.name.replace(' ', '')}Passive.webp`)
+            thumb = new AttachmentBuilder(`${assetsAbsPath}s2gods\\${godInfo.name.replace(' ', '')}Passive.webp`)
             break;
         case 'ability1':
             thumbName = `${godInfo.name.replace(' ', '')}A1.webp`;
-            thumb = new AttachmentBuilder(`D:\\Documents\\GitHub\\A-bot-erasu\\assets\\s2gods\\${godInfo.name.replace(' ', '')}A1.webp`)
+            thumb = new AttachmentBuilder(`${assetsAbsPath}s2gods\\${godInfo.name.replace(' ', '')}A1.webp`)
             break;
         case 'ability2':
             thumbName = `${godInfo.name.replace(' ', '')}A2.webp`;
-            thumb = new AttachmentBuilder(`D:\\Documents\\GitHub\\A-bot-erasu\\assets\\s2gods\\${godInfo.name.replace(' ', '')}A2.webp`)
+            thumb = new AttachmentBuilder(`${assetsAbsPath}s2gods\\${godInfo.name.replace(' ', '')}A2.webp`)
             break;
         case 'ability3':
             thumbName = `${godInfo.name.replace(' ', '')}A3.webp`;
-            thumb = new AttachmentBuilder(`D:\\Documents\\GitHub\\A-bot-erasu\\assets\\s2gods\\${godInfo.name.replace(' ', '')}A3.webp`)
+            thumb = new AttachmentBuilder(`${assetsAbsPath}s2gods\\${godInfo.name.replace(' ', '')}A3.webp`)
             break;
         case 'ability4':
             thumbName = `${godInfo.name.replace(' ', '')}A4.webp`;
-            thumb = new AttachmentBuilder(`D:\\Documents\\GitHub\\A-bot-erasu\\assets\\s2gods\\${godInfo.name.replace(' ', '')}A4.webp`)
+            thumb = new AttachmentBuilder(`${assetsAbsPath}s2gods\\${godInfo.name.replace(' ', '')}A4.webp`)
             break;
 
     }
@@ -180,7 +194,18 @@ module.exports = {
             option.setName('name')
                 .setDescription('Name of the god')
                 .setRequired(true)
-                .setAutocomplete(true)),
+                .setAutocomplete(true))
+        .addStringOption(option =>
+            option.setName('build')
+                .setDescription('Jump directly to the build for this god')
+                .setRequired(false)
+                .setChoices(
+                    {
+                        name: 'true',
+                        value: 'true'
+                    }
+                )
+        ),
 
 
 
@@ -205,7 +230,7 @@ module.exports = {
         const gods = await loadGods(false);
 
         const god = gods.find(i =>
-            i.name.toLowerCase() === godName.toLowerCase()
+            i.name.toLowerCase().includes(godName.toLowerCase())
         );
 
         if (!god) {
@@ -216,15 +241,7 @@ module.exports = {
             return;
         }
 
-        // Create the embed
-        const oldembed = new EmbedBuilder()
-            .setTitle(god.name)
-            .setDescription(`Details for ${god.name}`)
-            .addFields({
-                name: 'Calculate a build for this god:',
-                value: '[Click Here](https://www.smitecalculator.pro)',
-            })
-            .setColor(0xFFFF00);
+        const jumpToBuild = interaction.options.getString('build') ? true : false;
 
         const embedMessage = async (option) => {
             const thumbInfo = getThumb(god, option)
@@ -244,7 +261,6 @@ module.exports = {
             return [embed, thumbInfo.obj];
         }
 
-        // Add buttons for each feature
         const buttons1 = [
             { label: 'Passive', action: 'passive' },
             { label: 'Ability 1', action: 'ability1' },
@@ -274,24 +290,19 @@ module.exports = {
                     .setStyle(ButtonStyle.Primary)
             ));
 
-        // Send the embed with buttons
-        const oldEmbed = await embedMessage('basic');
+        const oldEmbed = await embedMessage(jumpToBuild ? 'build' : 'basic');
         const message = await interaction.reply({ embeds: [oldEmbed[0]], components: [row1, row2], fetchReply: true, files: [oldEmbed[1]] });
 
-        // Create a filter to only allow the user who invoked the command to interact
         const filter = i => i.user.id === interaction.user.id;
 
-        // Create a collector for button interactions
         const collector = message.createMessageComponentCollector({ filter, time: 30000 });
 
         collector.on('collect', async i => {
-            // Update the message with the new embed content
             const newEmbed = await embedMessage(i.customId)
             await i.update({ embeds: [newEmbed[0]], components: [row1, row2], files: [newEmbed[1]] });
         });
 
         collector.on('end', () => {
-            // Disable buttons after timeout
             //row1.components.forEach(button => button.setDisabled(true));
             //row2.components.forEach(button => button.setDisabled(true));
             message.edit({ components: [] });

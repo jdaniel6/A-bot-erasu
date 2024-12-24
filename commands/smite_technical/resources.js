@@ -10,7 +10,7 @@ for (const resource in resourceFileJSON) {
 }
 
 module.exports = {
-    data : new SlashCommandBuilder()
+    data: new SlashCommandBuilder()
         .setName('resources')
         .setDescription('View some helpful links and resources for Smite'),
     async execute(interaction) {
@@ -18,16 +18,16 @@ module.exports = {
         let _page = 0;
         const totalPages = resources.length - 1;
         const row = new ActionRowBuilder()
-        .addComponents(
-            new ButtonBuilder()
-                .setCustomId('backwards')
-                .setEmoji('◀️')
-                .setStyle(ButtonStyle.Secondary),
-            new ButtonBuilder()
-                .setCustomId('forward')
-                .setEmoji('▶️')
-                .setStyle(ButtonStyle.Success),
-        );
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('backwards')
+                    .setEmoji('◀️')
+                    .setStyle(ButtonStyle.Secondary),
+                new ButtonBuilder()
+                    .setCustomId('forward')
+                    .setEmoji('▶️')
+                    .setStyle(ButtonStyle.Success),
+            );
         const row2 = new ActionRowBuilder();
         const selectMenu = new StringSelectMenuBuilder()
             .setCustomId('select')
@@ -35,23 +35,23 @@ module.exports = {
         for (const resource in resources) {
             selectMenu.addOptions(
                 new StringSelectMenuOptionBuilder()
-                .setLabel(resources[resource]['Label'])
-                .setDescription(resources[resource]['Title'])
-                .setValue(resource),
+                    .setLabel(resources[resource]['Label'])
+                    .setDescription(resources[resource]['Title'])
+                    .setValue(resource),
             );
         }
         row2.addComponents(selectMenu);
 
         const embedMessage = async (page) => {
             const embed = new EmbedBuilder()
-            .setColor(0xFFFF00)
-            .setTitle(`${resources[page]['Title']}`)
-            .setDescription(`${resources[page]['Description']}`)
-            .setTimestamp()
-            .setFooter({text: 'use /help for links to further resources and help', iconURL: 'https://static.wikia.nocookie.net/smite_gamepedia/images/1/13/Icons_Amaterasu_A01.png/revision/latest?cb=20160107232023'});
+                .setColor(0xFFFF00)
+                .setTitle(`${resources[page]['Title']}`)
+                .setDescription(`${resources[page]['Description']}`)
+                .setTimestamp()
+                .setFooter({ text: 'use /help for links to further resources and help', iconURL: 'https://static.wikia.nocookie.net/smite_gamepedia/images/1/13/Icons_Amaterasu_A01.png/revision/latest?cb=20160107232023' });
             for (const field in resources[page]['Fields']) {
                 embed.addFields(
-                    { name : `${field}`, value: `${resources[page]['Fields'][field]}`},
+                    { name: `${field}`, value: `${resources[page]['Fields'][field]}` },
                 );
             }
             return embed;
@@ -62,7 +62,7 @@ module.exports = {
             row.components[1].setDisabled(true);
         }
 
-        await interaction.editReply({ embeds : [await embedMessage(_page)], components: [row2, row]});
+        await interaction.editReply({ embeds: [await embedMessage(_page)], components: [row2, row] });
 
         const filter = i => (i.customId === 'forward' || i.customId === 'backwards' || i.customId === 'select') && i.user.id === interaction.user.id;
 
@@ -123,11 +123,11 @@ module.exports = {
                 }
             }
             catch (error) {
-            console.error(error);
+                console.error(error);
             }
         });
         collector.on('end', async () => {
-            await interaction.editReply({ embeds: [await embedMessage(_page)], components: []});
+            await interaction.editReply({ embeds: [await embedMessage(_page)], components: [] });
         });
     },
 };
