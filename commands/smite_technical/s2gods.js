@@ -27,14 +27,6 @@ async function loadGods(noUpdate) {
     return gods;
 }
 
-function getText(array) {
-    let out = '';
-    for (const field of array) {
-        out = out.concat(`${field['text']}\n`);
-    }
-    return out;
-}
-
 function getDesc(godInfo, opt) {
     if (opt === 'passive') return (`**${godInfo.passive.name}:**\n${godInfo.passive.shortDesc}`);
     if (opt === 'ability1') return (`**${godInfo.abilities.A01.name}:**\n${godInfo.abilities.A01.shortDesc}`);
@@ -43,6 +35,7 @@ function getDesc(godInfo, opt) {
     if (opt === 'ability4') return (`**${godInfo.abilities.A04.name}:**\n${godInfo.abilities.A04.shortDesc}`);
     if (opt === 'basic') return (`**${godInfo.subText || 'Title unavailable from API'}:** ${godInfo.shortRole || 'Description unavailable from API'}`);
     if (opt === 'build') return (`Builds provided by Mytharria using [Smite Calculator](https://www.smitecalculator.pro), with input from Skepso, Mendar and other mentors from the [SMITE Server](https://discord.gg/smitegame)`);
+    if (opt === 'tips') return ('Tips and tricks provided by the mentors from the SMITE Discord Server');
     if (opt === 'lore') return (`**${godInfo.loreShort || 'Lore unavailable from API'}**\n\n${godInfo.loreLong || 'Lore unavailable from API'}`)
 }
 
@@ -133,7 +126,20 @@ function getFields(godInfo, opt) {
                 if (f.length > 0) return f;
                 else return null;
             }
-            else return null;
+            else {
+                const t = [];
+                if (opt.includes('tips') && godInfo.tips) {
+                    for (const tip of godInfo.tips) {
+                        t.push({
+                            name: tip.title,
+                            value: tip.value
+                        })
+                    }
+                    if (t.length > 0) return t;
+                    else return null;
+                }
+                else return null;
+            }
         }
     }
 
@@ -143,7 +149,7 @@ function getThumb(godInfo, opt) {
     let thumbName = '';
     let thumb = null;
     switch (opt) {
-        case 'build': case 'lore': case 'basic':
+        case 'build': case 'lore': case 'basic': case 'tips':
             thumbName = `${godInfo.name.replace(' ', '')}.webp`;
             thumb = new AttachmentBuilder(`${assetsAbsPath}s2gods\\${godInfo.name.replace(' ', '')}.webp`)
             break;
@@ -180,8 +186,9 @@ function convertToLabel(custID) {
         case 'ability3': return '3rd Ability';
         case 'ability4': return '4th (Ultimate) Ability';
         case 'basic': return 'Basic Details';
-        case 'build': return 'Recommended Builds';
+        case 'build': return 'Recommended SMITE2 Builds';
         case 'lore': return 'SMITE2 Lore';
+        case 'tips': return 'Tips and tricks';
 
     }
 }
@@ -272,6 +279,7 @@ module.exports = {
         const buttons2 = [
             { label: 'Basic Details', action: 'basic' },
             { label: 'Build', action: 'build' },
+            { label: 'Tips and Tricks', action: 'tips' },
             { label: 'Lore', action: 'lore' }
         ];
 
